@@ -7,7 +7,7 @@
 #include <sstream>
 #include <fstream>
 
-const unsigned int screenWidth  = 800;
+const unsigned int screenWidth = 800;
 const unsigned int screenHeight = 900;
 std::string screenTitle = "SFML Window";
 
@@ -15,7 +15,7 @@ const float playerSpeed     = 0.1;
 const float playerJumpSpeed = 0.5;
 const float gravitySpeed    = 0.2;
 const int   groundHeight    = 750;
-bool        isJumping		= false;
+bool        isJumping       = false;
 
 int playerScore = 0;
 int playerLives = 3;
@@ -55,7 +55,7 @@ int main() {
 	//Initionalize window
 	window.create(sf::VideoMode(screenWidth, screenHeight), screenTitle);
 
-	
+
 	//Font and Text
 	gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf");
 	if (!gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf")) { return EXIT_FAILURE; }
@@ -80,19 +80,19 @@ int main() {
 	while (window.isOpen()) {
 		while (window.pollEvent(sfEvent)) {
 			switch (sfEvent.type) {
-				case sf::Event::Closed:
-					window.close();
-					break;
+			case sf::Event::Closed:
+				window.close();
+				break;
 
-				case sf::Event::KeyReleased:
-					isJumping = false;
-					break;
+			case sf::Event::KeyReleased:
+				isJumping = false;
+				break;
 			}
 		}
 
 		//Player logic
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			player.moveTo({0, -playerJumpSpeed});
+			player.moveTo({ 0, -playerJumpSpeed });
 			isJumping = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { player.moveTo({ -playerSpeed, 0 }); }
