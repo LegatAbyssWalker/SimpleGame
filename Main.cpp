@@ -16,7 +16,6 @@ const int groundHeight = 750;
 const float gravitySpeed = 0.2;
 bool isJumping = false;
 
-int playerLives = 3;
 
 int main() {
 	//Player objects
@@ -42,6 +41,8 @@ int main() {
 
 	//Variables
 	int playerScore = 0;
+	int playerLives = 3;
+
 
 	sf::RenderWindow window;
 	sf::Event sfEvent;
@@ -57,7 +58,7 @@ int main() {
 
 	//Text/Font 
 	gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf");
-	if (!gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf")) { EXIT_FAILURE; }
+	if (!gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf")) { return EXIT_FAILURE; }
 
 	gameScore.setFont(gameFont);
 	gameScore.setCharacterSize(30);
@@ -77,11 +78,13 @@ int main() {
 	while (window.isOpen()) {
 		while (window.pollEvent(sfEvent)) {
 			switch (sfEvent.type) {
-			case sf::Event::Closed:
-				window.close();
+				case sf::Event::Closed:
+					window.close();
+					break;
 
-			case sf::Event::KeyReleased:
-				isJumping = false;
+				case sf::Event::KeyReleased:
+					isJumping = false;
+					break;
 			}
 		}
 		//Player logic
