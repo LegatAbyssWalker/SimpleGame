@@ -1,20 +1,21 @@
 #include "SFML/Graphics.hpp"
+
 #include "Player.h"
 #include "Coin.h"
 
-#include <sstream>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 
-const unsigned int screenWidth = 800;
+const unsigned int screenWidth  = 800;
 const unsigned int screenHeight = 900;
 std::string screenTitle = "SFML Window";
 
-const float playerSpeed = 0.1;
+const float playerSpeed     = 0.1;
 const float playerJumpSpeed = 0.5;
-const int groundHeight = 750;
-const float gravitySpeed = 0.2;
-bool isJumping = false;
+const float gravitySpeed    = 0.2;
+const int   groundHeight    = 750;
+bool        isJumping		= false;
 
 int playerScore = 0;
 int playerLives = 3;
@@ -42,36 +43,38 @@ int main() {
 	coin3.setCoinPos({ 300, 300 });
 
 
-	//SFML Variables
+	//Variables
 	sf::RenderWindow window;
 	sf::Event sfEvent;
 
 	sf::Font gameFont;
-	sf::Text gameScore, gameLives;
+	sf::Text playerScoreCounter, playerLivesCounter;
 
 	std::ostringstream ssScore, ssLives;
 
 	//Initionalize window
 	window.create(sf::VideoMode(screenWidth, screenHeight), screenTitle);
 
-
-	//Text/Font 
+	
+	//Font and Text
 	gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf");
 	if (!gameFont.loadFromFile("necessities/font/OptimusPrinceps.ttf")) { return EXIT_FAILURE; }
 
-	gameScore.setFont(gameFont);
-	gameScore.setCharacterSize(30);
-	gameScore.setPosition(screenWidth * 0, screenHeight * 0);
-	gameScore.setFillColor(sf::Color::Red);
+	playerScoreCounter.setFont(gameFont);
+	playerScoreCounter.setFillColor(sf::Color::Red);
+	playerScoreCounter.setCharacterSize(30);
+	playerScoreCounter.setPosition(screenWidth * 0, screenHeight * 0);
 	ssScore << "Score: " << playerScore;
-	gameScore.setString(ssScore.str());
+	playerScoreCounter.setString(ssScore.str());
 
-	gameLives.setFont(gameFont);
-	gameLives.setCharacterSize(30);
-	gameLives.setPosition(screenWidth * 0, 31);
-	gameLives.setFillColor(sf::Color::Red);
+
+	playerLivesCounter.setFont(gameFont);
+	playerLivesCounter.setFillColor(sf::Color::Red);
+	playerLivesCounter.setCharacterSize(30);
+	playerLivesCounter.setPosition(screenWidth * 0, 35);
 	ssLives << "Lives: " << playerLives;
-	gameLives.setString(ssLives.str());
+	playerLivesCounter.setString(ssLives.str());
+
 
 	//Main game loop
 	while (window.isOpen()) {
@@ -86,51 +89,46 @@ int main() {
 					break;
 			}
 		}
+
 		//Player logic
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-			player.moveTo({ 0, -playerJumpSpeed });
+			player.moveTo({0, -playerJumpSpeed});
 			isJumping = true;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { player.moveTo({ -playerSpeed, 0 }); }
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { player.moveTo({ playerSpeed, 0 }); }
 
 
-		//Player bounds
-		if (player.getY() + 20 <= 0) {
+		//Border logic
+		if (player.getY() < 0) {
 			playerLives--;
 			ssLives.str("");
 			ssLives << "Lives: " << playerLives;
-			gameLives.setString(ssLives.str());
+			playerLivesCounter.setString(ssLives.str());
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
 
-		if (player.getX() <= 0) {
+		if (player.getX() < 0) {
 			playerLives--;
 			ssLives.str("");
 			ssLives << "Lives: " << playerLives;
-			gameLives.setString(ssLives.str());
+			playerLivesCounter.setString(ssLives.str());
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
 
-		if (player.getX() >= 800) {
+		if (player.getX() > screenWidth) {
 			playerLives--;
 			ssLives.str("");
 			ssLives << "Lives: " << playerLives;
-			gameLives.setString(ssLives.str());
+			playerLivesCounter.setString(ssLives.str());
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
 
-		//RESET PLAYER POSITION BUTTONS **ADMIN ONLY**
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-			player.setPlayerPos({ screenWidth / 2, screenHeight / 2 });
-		}
 
-		//Player end screen if lives are 0
+		//Player death
 		if (playerLives <= 0) {
 			window.close();
-			std::cout << "Final Score: " << playerScore << '\n';
 			std::ofstream playerGameInformation("playerGameInformation.txt");
-
 			playerGameInformation << "Player Final Score: " << playerScore << '\n';
 			playerGameInformation.close();
 		}
@@ -149,21 +147,24 @@ int main() {
 				playerScore++;
 				ssScore.str("");
 				ssScore << "Score: " << playerScore;
-				gameScore.setString(ssScore.str());
+				playerScoreCounter.setString(ssScore.str());
 			}
 		}
 
-		//Rendering to window
+
+
+		//Rendering to screen
 		window.clear();
 
 		//Render items
 		player.drawTo(window);
+
 		coin1.drawTo(window);
 		coin2.drawTo(window);
 		coin3.drawTo(window);
 
-		window.draw(gameScore);
-		window.draw(gameLives);
+		window.draw(playerScoreCounter);
+		window.draw(playerLivesCounter);
 
 		window.display();
 	}
