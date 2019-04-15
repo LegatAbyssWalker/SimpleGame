@@ -16,6 +16,9 @@ const int groundHeight = 750;
 const float gravitySpeed = 0.2;
 bool isJumping = false;
 
+int playerScore = 0;
+int playerLives = 3;
+
 
 int main() {
 	//Player objects
@@ -39,11 +42,7 @@ int main() {
 	coin3.setCoinPos({ 300, 300 });
 
 
-	//Variables
-	int playerScore = 0;
-	int playerLives = 3;
-
-
+	//SFML Variables
 	sf::RenderWindow window;
 	sf::Event sfEvent;
 
