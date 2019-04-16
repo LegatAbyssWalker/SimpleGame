@@ -41,3 +41,9 @@ bool Player::collisionWithCoin(Coin* coin) {
 	return false;
 }
 
+bool Player::collisionWithEnemy(Enemy* enemy) {
+	if (player.getGlobalBounds().intersects(enemy->getGlobalBounds())) {
+		return true;
+	}
+	return false;
+}
