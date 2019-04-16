@@ -11,7 +11,7 @@
 #include <ctime>
 
 
-const unsigned int screenWidth = 800;
+const unsigned int screenWidth  = 800;
 const unsigned int screenHeight = 900;
 std::string screenTitle = "SFML Window";
 
@@ -24,11 +24,11 @@ bool        isJumping       = false;
 const float enemySpeed      = 0.1;
 int         randomEnemyMovement;
 
-int playerScore = 0;
-int playerLives = 3;
+int         playerScore     = 0;
+int         playerLives     = 3;
 
-int borderCount;
-int enemyCount;
+int         borderCount;
+int         enemyCount;
 
 int main() {
 	//Player objects
@@ -126,7 +126,7 @@ int main() {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { player.moveTo({ playerSpeed, 0 }); }
 
 
-		//Player loses life logic
+		//Player bounds logic
 		if (player.getY() <= 0) {
 			borderCount++;
 			playerLives--;
@@ -154,6 +154,8 @@ int main() {
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
 
+
+		//Collision with Enemy
 		for (int y = 0; y < enemyVector.size(); y++) {
 			if (player.collisionWithEnemy(enemyVector[y])) {
 				enemyCount++;
@@ -210,7 +212,7 @@ int main() {
 
 
 		//Enemy AI movement
-		/*---------------------------------------------------------------------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------*/
 		srand(time(NULL));
 		randomEnemyMovement = 1 + (rand() % 2);
 
@@ -273,8 +275,8 @@ int main() {
 				enemy3.setEnemyPos({ screenWidth / 2 + 50, 150 });
 			}
 		}
-
-		/*---------------------------------------------------------------------------------------------------------------------*/
+		/*------------------------------------------------------------------------------------------------------*/
+		
 
 		//Rendering to screen
 		window.clear();
