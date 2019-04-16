@@ -40,8 +40,18 @@ int main() {
 	std::vector<Enemy*> enemyVector;
 
 	Enemy enemy1({ 25, 25 });
+	Enemy enemy2({ 25, 25 });
+	Enemy enemy3({ 25, 25 });
+
 	enemyVector.push_back(&enemy1);
+	enemyVector.push_back(&enemy2);
+	enemyVector.push_back(&enemy3);
+
+
 	enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
+	enemy2.setEnemyPos({ screenWidth / 2 - 64, 250 });
+	enemy3.setEnemyPos({ screenWidth / 2 + 50, 150 });
+
 
 
 	//Coin objects
@@ -157,11 +167,24 @@ int main() {
 
 
 
-		//Player death
-		if (playerLives <= 0) {
+		//Player death / Player win
+		if (playerLives <= 0 && playerScore != 3) {
 			window.close();
 			std::ofstream playerGameInformation("playerGameInformation.txt");
+			playerGameInformation << "YOU LOSE!!\n";
 			playerGameInformation << "Player Final Score: " << playerScore << '\n';
+			playerGameInformation << "Player Lives Left: " << playerLives << '\n';
+			playerGameInformation << "Death by Border: " << borderCount << '\n';
+			playerGameInformation << "Death by Enemy: " << enemyCount << '\n';
+			playerGameInformation.close();
+		}
+
+		if (playerScore >= 3 && playerLives != 0) {
+			window.close();
+			std::ofstream playerGameInformation("playerGameInformation.txt");
+			playerGameInformation << "YOU WIN!!\n";
+			playerGameInformation << "Player Final Score: " << playerScore << '\n';
+			playerGameInformation << "Player Lives Left: " << playerLives << '\n';
 			playerGameInformation << "Death by Border: " << borderCount << '\n';
 			playerGameInformation << "Death by Enemy: " << enemyCount << '\n';
 			playerGameInformation.close();
@@ -187,11 +210,15 @@ int main() {
 
 
 		//Enemy AI movement
+		/*---------------------------------------------------------------------------------------------------------------------*/
 		srand(time(NULL));
 		randomEnemyMovement = 1 + (rand() % 2);
 
 		if (randomEnemyMovement == 1) { //LEFT
 			enemy1.updateMovement({-enemySpeed, 0});
+			enemy2.updateMovement({ -enemySpeed, 0 });
+			enemy3.updateMovement({ -enemySpeed, 0 });
+
 			if (enemy1.getEnemyX() <= 0) {
 				enemy1.setEnemyPos({screenWidth/2, screenHeight/2});
 			}
@@ -199,10 +226,29 @@ int main() {
 			if(enemy1.getEnemyX() >= screenWidth) {
 				enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
 			}
+
+			if (enemy2.getEnemyX() <= 0) {
+				enemy2.setEnemyPos({ screenWidth / 2 - 64, 250 });
+			}
+
+			if (enemy2.getEnemyX() >= screenWidth) {
+				enemy2.setEnemyPos({ screenWidth / 2 - 64, 250 });
+			}
+
+			if (enemy3.getEnemyX() <= 0) {
+				enemy3.setEnemyPos({ screenWidth / 2 + 50, 150 });
+			}
+
+			if (enemy3.getEnemyX() >= screenWidth) {
+				enemy3.setEnemyPos({ screenWidth / 2 + 50, 150 });
+			}
 		}
 		
 		if (randomEnemyMovement == 2) {//RIGHT
-			enemy1.updateMovement({enemySpeed, 0});
+			enemy1.updateMovement({ enemySpeed, 0 });
+			enemy2.updateMovement({ enemySpeed, 0 });
+			enemy3.updateMovement({ enemySpeed, 0 });
+
 			if (enemy1.getEnemyX() <= 0) {
 				enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
 			}
@@ -210,8 +256,25 @@ int main() {
 			if (enemy1.getEnemyX() >= screenWidth) {
 				enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
 			}
+
+			if (enemy2.getEnemyX() <= 0) {
+				enemy2.setEnemyPos({ screenWidth / 2 - 64, 250 });
+			}
+
+			if (enemy2.getEnemyX() >= screenWidth) {
+				enemy2.setEnemyPos({ screenWidth / 2 - 64, 250 });
+			}
+
+			if (enemy3.getEnemyX() <= 0) {
+				enemy3.setEnemyPos({ screenWidth / 2 + 50, 150 });
+			}
+
+			if (enemy3.getEnemyX() >= screenWidth) {
+				enemy3.setEnemyPos({ screenWidth / 2 + 50, 150 });
+			}
 		}
 
+		/*---------------------------------------------------------------------------------------------------------------------*/
 
 		//Rendering to screen
 		window.clear();
@@ -227,6 +290,8 @@ int main() {
 		window.draw(playerLivesCounter);
 
 		enemy1.drawTo(window);
+		enemy2.drawTo(window);
+		enemy3.drawTo(window);
 
 		window.display();
 	}
