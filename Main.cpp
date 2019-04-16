@@ -2,10 +2,14 @@
 
 #include "Player.h"
 #include "Coin.h"
+#include "Enemy.h"
 
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <cstdlib>
+#include <ctime>
+
 
 const unsigned int screenWidth = 800;
 const unsigned int screenHeight = 900;
@@ -17,14 +21,27 @@ const float gravitySpeed    = 0.2;
 const int   groundHeight    = 750;
 bool        isJumping       = false;
 
+const float enemySpeed      = 0.1;
+int         randomEnemyMovement;
+
 int playerScore = 0;
 int playerLives = 3;
 
+int borderCount;
+int enemyCount;
 
 int main() {
 	//Player objects
 	Player player({ 40, 40 });
 	player.setPlayerPos({ screenWidth / 2, groundHeight });
+
+
+	//Enemy objects
+	std::vector<Enemy*> enemyVector;
+
+	Enemy enemy1({ 25, 25 });
+	enemyVector.push_back(&enemy1);
+	enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
 
 
 	//Coin objects
@@ -99,8 +116,9 @@ int main() {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { player.moveTo({ playerSpeed, 0 }); }
 
 
-		//Border logic
-		if (player.getY() < 0) {
+		//Player loses life logic
+		if (player.getY() <= 0) {
+			borderCount++;
 			playerLives--;
 			ssLives.str("");
 			ssLives << "Lives: " << playerLives;
@@ -108,7 +126,8 @@ int main() {
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
 
-		if (player.getX() < 0) {
+		if (player.getX() <= 0) {
+			borderCount++;
 			playerLives--;
 			ssLives.str("");
 			ssLives << "Lives: " << playerLives;
@@ -116,13 +135,26 @@ int main() {
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
 
-		if (player.getX() > screenWidth) {
+		if (player.getX() >= screenWidth) {
+			borderCount++;
 			playerLives--;
 			ssLives.str("");
 			ssLives << "Lives: " << playerLives;
 			playerLivesCounter.setString(ssLives.str());
 			player.setPlayerPos({ screenWidth / 2, groundHeight });
 		}
+
+		for (int y = 0; y < enemyVector.size(); y++) {
+			if (player.collisionWithEnemy(enemyVector[y])) {
+				enemyCount++;
+				playerLives--;
+				ssLives.str("");
+				ssLives << "Lives: " << playerLives;
+				playerLivesCounter.setString(ssLives.str());
+				player.setPlayerPos({ screenWidth / 2, groundHeight });
+			}
+		}
+
 
 
 		//Player death
@@ -130,6 +162,8 @@ int main() {
 			window.close();
 			std::ofstream playerGameInformation("playerGameInformation.txt");
 			playerGameInformation << "Player Final Score: " << playerScore << '\n';
+			playerGameInformation << "Death by Border: " << borderCount << '\n';
+			playerGameInformation << "Death by Enemy: " << enemyCount << '\n';
 			playerGameInformation.close();
 		}
 
@@ -152,6 +186,32 @@ int main() {
 		}
 
 
+		//Enemy AI movement
+		srand(time(NULL));
+		randomEnemyMovement = 1 + (rand() % 2);
+
+		if (randomEnemyMovement == 1) { //LEFT
+			enemy1.updateMovement({-enemySpeed, 0});
+			if (enemy1.getEnemyX() <= 0) {
+				enemy1.setEnemyPos({screenWidth/2, screenHeight/2});
+			}
+
+			if(enemy1.getEnemyX() >= screenWidth) {
+				enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
+			}
+		}
+		
+		if (randomEnemyMovement == 2) {//RIGHT
+			enemy1.updateMovement({enemySpeed, 0});
+			if (enemy1.getEnemyX() <= 0) {
+				enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
+			}
+
+			if (enemy1.getEnemyX() >= screenWidth) {
+				enemy1.setEnemyPos({ screenWidth / 2, screenHeight / 2 });
+			}
+		}
+
 
 		//Rendering to screen
 		window.clear();
@@ -165,6 +225,8 @@ int main() {
 
 		window.draw(playerScoreCounter);
 		window.draw(playerLivesCounter);
+
+		enemy1.drawTo(window);
 
 		window.display();
 	}
